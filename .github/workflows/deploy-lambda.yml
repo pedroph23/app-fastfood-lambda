@@ -17,6 +17,11 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: 1.17
+  
+    - name: Initialize Go Module
+      run: |
+        cd app
+        go mod init app  # Inicializa o módulo Go na pasta "app"
 
     - name: Build Go
       run: |
