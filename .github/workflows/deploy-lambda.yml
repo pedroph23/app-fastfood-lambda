@@ -22,6 +22,11 @@ jobs:
       run: |
         cd app
         go mod init app  # Inicializa o módulo Go na pasta "app"
+  
+    - name: Download Dependencies
+      run: |
+          cd app
+          go mod download  # Baixa todas as dependências do projeto
 
     - name: Build Go
       run: |
