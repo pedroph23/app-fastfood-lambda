@@ -6,9 +6,9 @@ resource "aws_lambda_function" "example" {
   function_name = "example-lambda"
   filename      = "example_lambda.zip"  # O arquivo ZIP da sua função
   role         = aws_iam_role.lambda_exec_role.arn
-  handler      = "com.example.LambdaHandler::handleRequest"  # Substitua com o nome da sua classe e método
+  handler      = "example_lambda"  # Nome do executável Go
 
-  runtime = "java17"  # Define a versão do JDK
+  runtime = "go1.x"  # Define a versão do Go
 
   environment {
     variables = {
@@ -42,6 +42,8 @@ resource "aws_iam_policy_attachment" "lambda_execution" {
 
 data "archive_file" "example_lambda" {
   type        = "zip"
-  source_dir  = "example_lambda_code"  # Diretório contendo o código da função Lambda
+  source_dir  = "example_lambda_code"  # Diretório contendo o código da função Lambda em Go
   output_path = "example_lambda.zip"
 }
+
+# Certifique-se de compilar seu código Go para um executável "example_lambda" antes de executar o Terraform.
