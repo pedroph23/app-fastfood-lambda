@@ -9,20 +9,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Java
-      uses: actions/setup-java@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
       with:
-        java-version: 17
+        go-version: 1.17
 
-    - name: Build Java
+    - name: Build Go
       run: |
         cd app
-        mvn clean package  # Compilar seu código Java e criar um pacote JAR
+        go build -o main  # Compilar seu código Go
 
   test:
     needs: build
@@ -32,10 +31,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Run Java Tests
+    - name: Run Go Tests
       run: |
         cd app
-        mvn test  # Executar seus testes Java
+        go test ./...  # Executar seus testes Go
 
   deploy:
     needs: [build, test]
@@ -49,8 +48,8 @@ jobs:
 
     - name: Create Lambda Deployment Package
       run: |
-        cd app/target
-        zip -r lambda-deployment-package.zip .
+        cd app
+        zip -r lambda-deployment-package.zip main
         mv lambda-deployment-package.zip $GITHUB_WORKSPACE
 
     - name: Set up Terraform
@@ -72,4 +71,3 @@ jobs:
       run: |
         cd infra
         terraform apply -auto-approve
-
