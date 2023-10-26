@@ -1,51 +1,38 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/gin-gonic/gin"
 )
 
-func LambdaHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	// Crie uma instância do servidor Gin
+type Response struct {
+	Message string `json:"message"`
+}
+
+func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	r := gin.Default()
 
-	// Defina uma rota Gin que corresponda à rota da sua API Gateway
-	r.GET("/hello", func(c *gin.Context) {
-		// Extraia os parâmetros da solicitação da API Gateway
-		name := c.DefaultQuery("name", "World")
-
-		// Execute sua lógica de negócios
-		message := "Hello, " + name
-
-		// Responda com a mensagem
-		c.JSON(200, gin.H{"message": message})
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, Response{Message: "Hello World"})
 	})
 
-	// Crie um contexto Gin manualmente e configure-o com a solicitação da API Gateway
-	ctx := &gin.Context{
-		Request: &http.Request{
-			Method: "GET", // Defina o método HTTP da solicitação
-			URL: &url.URL{
-				Path: "/hello", // Defina o caminho da solicitação
-			},
-			Header: make(http.Header),
-		},
-		Writer: c.Writer, // Use o gravador de resposta do Gin
+	respBody, err := json.Marshal(r.Run())
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to marshal response body: %v", err)
 	}
 
-	// Execute a solicitação no servidor Gin
-	r.ServeHTTP(ctx.Writer, ctx.Request)
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Body:       string(respBody),
+	}, nil
+}
 
-	// Converta a resposta de Gin em uma resposta da API Gateway
-	response := events.APIGatewayProxyResponse{
-		StatusCode:      ctx.Writer.Status(),
-		Headers:         ctx.Writer.Header(),
-		Body:            ctx.Writer.Body.String(),
-		IsBase64Encoded: false,
-	}
-
-	return response, nil
+func main() {
+	lambda.Start(Handler)
 }
