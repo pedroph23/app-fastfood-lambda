@@ -33,22 +33,15 @@ jobs:
       run: |
         cd app
         go build -o main  # Compilar seu código Go
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
+        
     - name: Run Go Tests
       run: |
         cd app
         go test  # Executar seus testes Go
 
+
   deploy:
-    needs: [build, test]
+    needs: [build]
     runs-on: ubuntu-latest
     env:
         AWS_DEFAULT_REGION: us-east-1
