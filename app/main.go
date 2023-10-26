@@ -8,7 +8,6 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/gin-gonic/gin"
 )
 
 type Response struct {
@@ -16,13 +15,8 @@ type Response struct {
 }
 
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	r := gin.Default()
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, Response{Message: "Hello World"})
-	})
-
-	respBody, err := json.Marshal(r.Run())
+	respBody, err := json.Marshal("Hello World")
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to marshal response body: %v", err)
 	}
