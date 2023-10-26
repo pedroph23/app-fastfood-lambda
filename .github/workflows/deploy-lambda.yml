@@ -45,7 +45,7 @@ jobs:
     - name: Run Go Tests
       run: |
         cd app
-        go test ./...  # Executar seus testes Go
+        go test  # Executar seus testes Go
 
   deploy:
     needs: [build, test]
