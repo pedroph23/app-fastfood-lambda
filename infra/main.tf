@@ -15,7 +15,6 @@ resource "aws_lambda_function" "example" {
 
   filename     = var.TF_LAMBDA_ZIP_PATH # Recupera o zip da lambda disponibilizado pela esteira
 
-  source_code_hash = filebase64sha256("${path.module}/lambda-deployment-package.zip")
 
   environment {
     variables = {
