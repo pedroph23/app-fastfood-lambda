@@ -57,8 +57,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Download Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: lambda-package
+        path: '${{ github.workspace }}/lambda'
+
     - name: Create Lambda Deployment Package
       run: |
+        ls -la
         zip -r lambda-deployment-package.zip . -i main
         echo "Caminho do zip: $GITHUB_WORKSPACE/lambda-deployment-package.zip"
 
