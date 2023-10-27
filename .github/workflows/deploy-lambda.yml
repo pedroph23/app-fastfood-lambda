@@ -39,12 +39,11 @@ jobs:
         cd $GITHUB_WORKSPACE
         ls -l
        
-
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: lambda-deployment-package
-        path: $GITHUB_WORKSPACE/main
+        path: $GITHUB_WORKSPACE
 
     - name: Run Go Tests
       run: |
