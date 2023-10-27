@@ -33,15 +33,15 @@ jobs:
       run: |
         cd app
         go build -o main  # Compilar seu código Go
-        cp main $GITHUB_WORKSPACE  # Copiar o arquivo binário para a pasta "app"
-        echo "::set-output name=bin_path::$(pwd)/main"  # Define o caminho do arquivo binário como uma saída
+        cp main $GITHUB_WORKSPACE/main  # Copiar o arquivo binário para a pasta "app"
+       
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: lambda-deployment-package
         path: $GITHUB_WORKSPACE/main
-        
+
     - name: Run Go Tests
       run: |
         cd app
