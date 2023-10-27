@@ -42,7 +42,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: lambda-deployment-package
+        name: main
         path: $GITHUB_WORKSPACE
 
     - name: Run Go Tests
