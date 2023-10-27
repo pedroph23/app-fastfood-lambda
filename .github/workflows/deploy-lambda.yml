@@ -40,7 +40,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: lambda-deployment-package
-        path: ${{ steps.build.outputs.bin_path }}  # Faz upload do arquivo binário como um artefato
+        path: $GITHUB_WORKSPACE/main
         
     - name: Run Go Tests
       run: |
