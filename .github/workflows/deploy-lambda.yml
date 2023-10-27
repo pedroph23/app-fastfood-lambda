@@ -62,7 +62,7 @@ jobs:
       with:
         role-to-assume: arn:aws:iam::101478099523:role/deploy_lambda_dynamo
         aws-region: us-east-1 # Substitua pela sua região
-        
+
     - name: Checkout repository
       uses: actions/checkout@v2
 
@@ -93,9 +93,7 @@ jobs:
     - name: Terraform Plan
       run: |
         cd infra
-        terraform plan -out=tfplan
-        terraform show -json tfplan | jq
-
+        terraform plan
     - name: Terraform Apply
       run: |
         cd infra
