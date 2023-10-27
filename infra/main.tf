@@ -38,6 +38,7 @@ resource "aws_iam_role" "lambda_exec_role" {
 resource "aws_iam_policy_attachment" "lambda_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   roles      = [aws_iam_role.lambda_exec_role.name]
+  name       = "lambda-execution-attachment"
 }
 
 data "archive_file" "example_lambda" {

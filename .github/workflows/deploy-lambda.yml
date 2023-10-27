@@ -43,8 +43,6 @@ jobs:
   deploy:
     needs: [build]
     runs-on: ubuntu-latest
-    env:
-        AWS_DEFAULT_REGION: us-east-1
 
     steps:
     - name: Checkout repository
@@ -61,12 +59,12 @@ jobs:
       with:
         terraform_version: 1.0.5
 
-    - name: Configure AWS credentials
-      run: |
-        mkdir -p ~/.aws
-        echo "[default]" > ~/.aws/credentials
-        echo "aws_access_key_id=AKIARPIEQ5JBXC3M3XJW" >> ~/.aws/credentials
-        echo "aws_secret_access_key=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" >> ~/.aws/credentials
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: AKIARPIEQ5JBXC3M3XJW
+        aws-secret-access-key: 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
+        aws-region: us-east-1 # Substitua pela sua região
 
     - name: Terraform Init
       run: |
