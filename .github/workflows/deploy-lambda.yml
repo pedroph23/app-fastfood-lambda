@@ -93,7 +93,7 @@ jobs:
     - name: Terraform Plan
       run: |
         cd infra
-        terraform plan -input=false -out=tfplan
+        TF_LAMBDA_ZIP_PATH="${{ github.workspace }}/lambda/lambda-deployment-package.zip" terraform plan -input=false -out=tfplan
 
     - name: Terraform Apply
       run: |
