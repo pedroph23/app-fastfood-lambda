@@ -33,6 +33,7 @@ jobs:
       run: |
         cd app
         go build -o main  # Compilar seu código Go
+        cp main $GITHUB_WORKSPACE  # Copiar o arquivo binário para a pasta "app"
 
     - name: Run Go Tests
       run: |
@@ -50,9 +51,7 @@ jobs:
 
     - name: Create Lambda Deployment Package
       run: |
-        cd app
         zip -r lambda-deployment-package.zip . -i main
-        mv lambda-deployment-package.zip $GITHUB_WORKSPACE"
         echo "Caminho do zip: $GITHUB_WORKSPACE/lambda-deployment-package.zip"
 
     - name: Set up Terraform
