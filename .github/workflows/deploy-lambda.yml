@@ -33,17 +33,17 @@ jobs:
       run: |
         cd app
         go build -o main  # Compilar seu código Go
-        ls -l
         echo "GitHub Workspace: $GITHUB_WORKSPACE"
-        cp main $GITHUB_WORKSPACE/main  # Copiar o arquivo binário para a pasta "app"
+        mkdir $GITHUB_WORKSPACE/app
+        cp main $GITHUB_WORKSPACE/app/main  # Copiar o arquivo binário para a pasta "app"
         cd $GITHUB_WORKSPACE
         ls -l
        
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: main
-        path: ${{ github.workspace }}
+        name: lambda-package
+        path: '${{ github.workspace }}/app'
 
     - name: Run Go Tests
       run: |
