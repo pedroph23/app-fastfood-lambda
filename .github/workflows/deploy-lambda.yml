@@ -96,7 +96,7 @@ jobs:
         terraform plan -input=false -var="TF_LAMBDA_ZIP_PATH='${{ github.workspace }}/lambda-deployment-package.zip'" -out=tfplan
 
     - name: Terraform Apply
-      continues-on-error: true
+      continue-on-error: true
       run: |
         cd infra
         terraform apply -input=false -var="TF_LAMBDA_ZIP_PATH='${{ github.workspace }}/lambda-deployment-package.zip'" -auto-approve
