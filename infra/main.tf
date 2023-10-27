@@ -2,6 +2,11 @@ provider "aws" {
   region = "us-east-1" # Substitua pela sua região
 }
 
+
+variable "TF_LAMBDA_ZIP_PATH" {
+  type = string
+}
+
 resource "aws_lambda_function" "example" {
   function_name = "example"
   role         = aws_iam_role.example.arn
