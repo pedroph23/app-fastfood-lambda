@@ -36,6 +36,8 @@ jobs:
         ls -l
         echo "GitHub Workspace: $GITHUB_WORKSPACE"
         cp main $GITHUB_WORKSPACE/main  # Copiar o arquivo binário para a pasta "app"
+        cd $GITHUB_WORKSPACE/main
+        ls -l
        
 
     - name: Upload Artifact
