@@ -2,15 +2,20 @@ provider "aws" {
   region = "us-east-1" # Substitua pela sua região
 }
 
+
+variable "lambda_zip_path" {
+  description = "Caminho para o arquivo zip da Lambda"
+  type        = string
+  default     = "${github.workspace}/app/lambda-deployment-package.zip"
+}
+
 resource "aws_lambda_function" "example" {
   function_name = "example"
   role         = aws_iam_role.example.arn
   handler      = "main"
   runtime      = "go1.x"
+  filename     = lambda_zip_path
 
-  filename     = "${{ github.workspace }}/lambda/lambda-deployment-package.zip" # Recupera o zip da lambda disponibilizado pela esteira
-
-  source_code_hash = filebase64sha256("${path.module}/lambda-deployment-package.zip")
 
   environment {
     variables = {
