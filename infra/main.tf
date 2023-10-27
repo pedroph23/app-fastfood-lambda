@@ -8,7 +8,7 @@ resource "aws_lambda_function" "example" {
   handler      = "main"
   runtime      = "go1.x"
 
-  filename     = "${path.module}/lambda-deployment-package.zip" # Recupera o zip da lambda disponibilizado pela esteira
+  filename     = "${{ github.workspace }}/lambda/lambda-deployment-package.zip" # Recupera o zip da lambda disponibilizado pela esteira
 
   source_code_hash = filebase64sha256("${path.module}/lambda-deployment-package.zip")
 
