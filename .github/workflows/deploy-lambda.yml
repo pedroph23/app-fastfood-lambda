@@ -81,9 +81,6 @@ jobs:
         aws-access-key-id: AKIARPIEQ5JBXC3M3XJW
         aws-secret-access-key: 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
         aws-region: us-east-1 # Substitua pela sua região
-    - name: Set Terraform Environment Variable
-      run: |
-        echo "TF_LAMBDA_ZIP_PATH=${{ github.workspace }}/lambda/lambda-deployment-package.zip" >> $GITHUB_ENV
 
     - name: Terraform Init
       run: |
@@ -93,4 +90,4 @@ jobs:
     - name: Terraform Apply
       run: |
         cd infra
-        terraform apply -auto-approve
+        TF_LAMBDA_ZIP_PATH=${{ github.workspace }}/lambda/lambda-deployment-package.zip" terraform apply -auto-approve
