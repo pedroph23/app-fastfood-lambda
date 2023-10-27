@@ -35,10 +35,8 @@ jobs:
         go build -o main  # Compilar seu código Go
         echo "GitHub Workspace: $GITHUB_WORKSPACE"
         mkdir $GITHUB_WORKSPACE/lambda
-        cp main $GITHUB_WORKSPACE/app/main  # Copiar o arquivo binário para a pasta "app"
-        cd $GITHUB_WORKSPACE
-        ls -l
-       
+        cp main $GITHUB_WORKSPACE/lambda  # Copiar o arquivo binário para a pasta "app"
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
