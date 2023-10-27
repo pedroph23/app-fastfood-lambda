@@ -90,4 +90,6 @@ jobs:
     - name: Terraform Apply
       run: |
         cd infra
+        terraform plan -out=tfplan
+        terraform show -json tfplan | jq
         TF_LAMBDA_ZIP_PATH="${{ github.workspace }}/lambda/lambda-deployment-package.zip" terraform apply -auto-approve
