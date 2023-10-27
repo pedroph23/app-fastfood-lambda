@@ -75,9 +75,9 @@ jobs:
     - name: Create Lambda Deployment Package
       run: |
         cd lambda
-        ls -la
         zip -r lambda-deployment-package.zip . -i main
-        echo "Caminho do zip: $GITHUB_WORKSPACE/lambda-deployment-package.zip"
+        pwd
+        ls -la
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v2
