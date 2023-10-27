@@ -55,8 +55,14 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
 
-
     steps:
+    
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v4.0.1
+      with:
+        role-to-assume: arn:aws:iam::101478099523:role/deploy_lambda_dynamo
+        aws-region: us-east-1 # Substitua pela sua região
+        
     - name: Checkout repository
       uses: actions/checkout@v2
 
@@ -73,16 +79,11 @@ jobs:
         zip -r lambda-deployment-package.zip . -i main
         echo "Caminho do zip: $GITHUB_WORKSPACE/lambda-deployment-package.zip"
 
+        
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: latest
-
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v4.0.1
-      with:
-        role-to-assume: arn:aws:iam::101478099523:role/deploy_lambda_dynamo
-        aws-region: us-east-1 # Substitua pela sua região
 
     - name: Terraform Init
       run: |
