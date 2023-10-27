@@ -87,12 +87,13 @@ jobs:
     - name: Terraform Init
       run: |
         cd infra
-        terraform init
+        terraform init 
+        terraform validate
 
     - name: Terraform Plan
       run: |
         cd infra
-        terraform plan input=false -out=tfplan
+        terraform plan -input=false -out=tfplan
 
     - name: Terraform Apply
       run: |
