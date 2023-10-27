@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
-
+permissions:
+    id-token: write # This is required for requesting the JWT
+    contents: read  # This is required for actions/checkout
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -53,6 +55,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
 
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -78,8 +81,7 @@ jobs:
     - name: Set up AWS CLI
       uses: aws-actions/configure-aws-credentials@v4.0.1
       with:
-        aws-access-key-id: AKIARPIEQ5JBXC3M3XJW
-        aws-secret-access-key: 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
+        role-to-assume: arn:aws:iam::101478099523:role/deploy_lambda_dynamo
         aws-region: us-east-1 # Substitua pela sua região
 
     - name: Terraform Init
