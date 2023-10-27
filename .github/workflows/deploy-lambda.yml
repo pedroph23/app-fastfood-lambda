@@ -34,6 +34,7 @@ jobs:
         cd app
         go build -o main  # Compilar seu código Go
         ls -l
+        echo "GitHub Workspace: $GITHUB_WORKSPACE"
         cp main $GITHUB_WORKSPACE/main  # Copiar o arquivo binário para a pasta "app"
        
 
