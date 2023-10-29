@@ -3,9 +3,6 @@ package usecases
 
 import (
 	"fmt"
-
-	"github.com/example/domain"
-	"github.com/example/repositories"
 )
 
 type ConsultarClienteUC struct {

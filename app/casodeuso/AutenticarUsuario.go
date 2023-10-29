@@ -4,7 +4,6 @@ package casodeuso
 import (
 	"fmt"
 
-	"github.com/example/domain"
 	"github.com/golang-jwt/jwt"
 )
 

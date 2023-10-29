@@ -1,27 +1,24 @@
-// controllers/autenticacao_cliente_controller.go
 package controladores
 
 import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-
-	"github.com/app/casodeuso"
 )
 
-type AutenticacaoClienteController struct {
+type AutenticacaoController struct {
 	consultarClienteUC    usecases.ConsultarClienteUC
 	autenticacaoClienteUC usecases.AutenticacaoClienteUC
 }
 
-func NewAutenticacaoClienteController(consultarClienteUC usecases.ConsultarClienteUC, autenticacaoClienteUC usecases.AutenticacaoClienteUC) *AutenticacaoClienteController {
-	return &AutenticacaoClienteController{
+func NewAutenticacaoController(consultarClienteUC usecases.ConsultarClienteUC, autenticacaoClienteUC usecases.AutenticacaoClienteUC) *AutenticacaoClienteController {
+	return &AutenticacaoController{
 		consultarClienteUC:    consultarClienteUC,
 		autenticacaoClienteUC: autenticacaoClienteUC,
 	}
 }
 
-func (c *AutenticacaoClienteController) Handle(idCliente string) ([]byte, error) {
+func (c *AutenticacaoController) Handle(idCliente string) ([]byte, error) {
 	hash := md5.Sum([]byte(idCliente))
 	hashStr := hex.EncodeToString(hash[:])
 

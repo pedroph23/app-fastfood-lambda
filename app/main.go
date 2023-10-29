@@ -5,20 +5,17 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/app-fastfood-lambda/app/casodeuso"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/example/controllers"
-	"github.com/example/repositories"
 )
 
 type Response struct {
 	Message string `json:"message"`
 }
 
-func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC usecases.AutenticacaoClienteUC) (events.APIGatewayProxyResponse, error) {
+func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC usecases.AutenticacaoClienteUC, cadastroClienteUC usecases.CadastroClienteU) (events.APIGatewayProxyResponse, error) {
 	// TODO: Implementar a lógica de autenticação do cliente
-	controller := controllers.NewAutenticacaoClienteController(autenticacaoClienteUC)
+	controller := NewAutenticacaoController(autenticacaoClienteUC, cadastroClienteUC)
 	respBody, err := controller.Handle(req.PathParameters["id_cliente"])
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to handle request: %v", err)
