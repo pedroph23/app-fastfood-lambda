@@ -25,11 +25,11 @@ resource "aws_iam_role" "example" {
   name = "example"
 
   assume_role_policy = jsonencode({
-    Version = "2012-10-17"
+    Version = "2012-10-17",
     Statement = [
       {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
         Principal = {
           Service = "lambda.amazonaws.com"
         }
@@ -40,7 +40,7 @@ resource "aws_iam_role" "example" {
 
 resource "aws_iam_role_policy" "example" {
   name        = "DynamoDBAccessPolicy"
-  role        = aws_iam_role.example.id
+  role        = aws_iam_role.example.name
 
   policy = jsonencode({
     Version = "2012-10-17",
