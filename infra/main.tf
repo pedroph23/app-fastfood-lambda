@@ -59,7 +59,7 @@ resource "aws_iam_role_policy" "example" {
 }
 
 resource "aws_iam_role_policy_attachment" "example" {
-  policy_arn = aws_iam_role_policy.example.arn
+  policy_arn = aws_iam_role_policy.example.name
   role       = aws_iam_role.example.name
 }
 
