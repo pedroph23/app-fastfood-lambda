@@ -1,25 +1,27 @@
-// usecases/consultar_cliente_uc.go
-package usecases
+package casodeuso
 
 import (
 	"fmt"
+
+	"github.com/pedroph23/app-fastfood-lambda/app/dominio"
+	"github.com/pedroph23/app-fastfood-lambda/app/repositorio"
 )
 
-type ConsultarClienteUC struct {
-	clienteRepository repositories.ClienteRepository
+type ConsultarCliente struct {
+	clienteRepository repositorio.RepositorioCliente
 }
 
-func NewConsultarClienteUC(clienteRepository repositories.ClienteRepository) *ConsultarClienteUC {
-	return &ConsultarClienteUC{clienteRepository: clienteRepository}
+func NewConsultarCliente(clienteRepository repositorio.RepositorioCliente) *ConsultarCliente {
+	return &ConsultarCliente{clienteRepository: clienteRepository}
 }
 
-func (uc *ConsultarClienteUC) ConsultarCliente(idCliente string) (*domain.Cliente, error) {
+func (uc *ConsultarCliente) ConsultarCliente(idCliente string) (*dominio.Cliente, error) {
 	cliente, err := uc.clienteRepository.BuscarClientePorID(idCliente)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find client: %v", err)
 	}
 
-	domainCliente := domain.NewCliente(cliente.CPF, cliente.Nome, cliente.Email, cliente.ID)
+	domainCliente := dominio.NewCliente(cliente.CPF, cliente.Nome, cliente.Email, cliente.ID)
 
 	return domainCliente, nil
 }

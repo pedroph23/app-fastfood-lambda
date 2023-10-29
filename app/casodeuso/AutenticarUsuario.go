@@ -5,26 +5,27 @@ import (
 	"fmt"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/pedroph23/app-fastfood-lambda/app/dominio"
 )
 
 type AutenticarUsuario struct{}
 
-func AutenticarUsuario() *AutenticarUsuario {
+func NewAutenticarUsuario() *AutenticarUsuario {
 	return &AutenticarUsuario{}
 }
 
-func (uc *AutenticarUsuario) AutenticarCliente(cliente *domain.Cliente) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodNone, jwt.MapClaims{
-		"user":  cliente.ID,
-		"cpf":   cliente.CPF,
-		"nome":  cliente.Nome,
-		"email": cliente.Email,
-		"iss":   "appfastfood",
-	})
+func (uc *AutenticarUsuario) AutenticarCliente(cliente *dominio.Cliente) (string, error) {
+	token := jwt.New(jwt.GetSigningMethod("none"))
+	claims := token.Claims.(jwt.MapClaims)
+	claims["user"] = cliente.ID
+	claims["cpf"] = cliente.CPF
+	claims["nome"] = cliente.Nome
+	claims["email"] = cliente.Email
+	claims["iss"] = "appfastfood"
 
-	tokenString, err := token.SignedString([]byte(""))
+	tokenString, err := token.SignedString(jwt.UnsafeAllowNoneSignatureType)
 	if err != nil {
-		return "", fmt.Errorf("failed to sign token: %v", err)
+		return "", fmt.Errorf("failed to create unsigned token: %v", err)
 	}
 
 	return tokenString, nil
