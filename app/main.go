@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/app-fastfood-lambda/app/casodeuso"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/example/controllers"
 	"github.com/example/repositories"
-	"github.com/example/usecases"
 )
 
 type Response struct {
