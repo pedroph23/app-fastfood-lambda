@@ -1,8 +1,6 @@
 package controladores
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
 
 	"github.com/pedroph23/app-fastfood-lambda/app/casodeuso"
@@ -21,12 +19,8 @@ func NewAutenticacaoController(consultarClienteUC *casodeuso.ConsultarCliente, a
 }
 
 func (c *AutenticacaoController) Handle(idCliente string) ([]byte, error) {
-	hash := md5.Sum([]byte(idCliente))
-	hashStr := hex.EncodeToString(hash[:])
-	println("hashStr")
-	println(hashStr)
 
-	cliente, err := c.consultarClienteUC.ConsultarCliente(hashStr)
+	cliente, err := c.consultarClienteUC.ConsultarCliente(idCliente)
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate client: %v", err)
 	}

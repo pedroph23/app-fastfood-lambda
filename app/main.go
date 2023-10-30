@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
-	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -35,8 +35,7 @@ func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyR
 func CadastroClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, cadastrarClienteUC *casodeuso.CadastrarCliente) (events.APIGatewayProxyResponse, error) {
 	// TODO: Implementar a lógica de criação de cliente
 	controller := controladores.NewCadastroClienteController(cadastrarClienteUC)
-	fmt.Printf("req.Body")
-	fmt.Printf("req.Body: %s\n", req.Body)
+	log.Printf("req.Body: %s\n", req.Body)
 	respBody, err := controller.Handle(req.Body)
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to handle request: %v", err)
@@ -50,7 +49,7 @@ func CadastroClienteHandler(ctx context.Context, req events.APIGatewayProxyReque
 
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC *casodeuso.AutenticarUsuario,
 	consultarClienteUC *casodeuso.ConsultarCliente, cadastrarClienteUC *casodeuso.CadastrarCliente) (events.APIGatewayProxyResponse, error) {
-	fmt.Fprintf(os.Stderr, "req.Body: %s\n", req.Body)
+	log.Printf("req.Body: %s\n", req.Body)
 	switch req.HTTPMethod {
 	case "POST":
 		if req.Path == "/clientes/{id_cliente}/auth" {
@@ -73,6 +72,8 @@ func main() {
 	cadastrarClienteUC := casodeuso.NewCadastrarCliente(clienteRepository)
 
 	lambda.Start(func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+		log.Printf("req.Body: %s\n", req.Body)
 		return Handler(ctx, req, autenticacaoClienteUC, consultarClienteUC, cadastrarClienteUC)
+
 	})
 }

@@ -1,6 +1,8 @@
 package repositorio
 
 import (
+	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -48,8 +50,9 @@ func (r *RepositorioClienteDynamoDBImpl) BuscarClientePorID(idCliente string) (*
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Printf("result: %v\n", result)
 	cliente := &dominio.Cliente{}
 	err = dynamodbattribute.UnmarshalMap(result.Item, cliente)
+	fmt.Printf("cliente: %v\n", cliente)
 	return cliente, err
 }

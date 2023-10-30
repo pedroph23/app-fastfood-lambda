@@ -21,7 +21,7 @@ func (uc *ConsultarCliente) ConsultarCliente(idCliente string) (*dominio.Cliente
 		return nil, fmt.Errorf("failed to find client: %v", err)
 	}
 
-	domainCliente := dominio.NewCliente(cliente.CPF, cliente.Nome, cliente.Email, cliente.ID)
+	domainCliente := dominio.NewCliente(cliente.CPF, cliente.ID, cliente.Nome, cliente.Email)
 
 	return domainCliente, nil
 }
