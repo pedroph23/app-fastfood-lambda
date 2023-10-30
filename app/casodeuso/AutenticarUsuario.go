@@ -18,9 +18,6 @@ func (uc *AutenticarUsuario) AutenticarCliente(cliente *dominio.Cliente) (string
 	token := jwt.New(jwt.GetSigningMethod("none"))
 	claims := token.Claims.(jwt.MapClaims)
 	claims["user"] = cliente.ID
-	claims["cpf"] = cliente.CPF
-	claims["nome"] = cliente.Nome
-	claims["email"] = cliente.Email
 	claims["iss"] = "appfastfood"
 
 	tokenString, err := token.SignedString(jwt.UnsafeAllowNoneSignatureType)

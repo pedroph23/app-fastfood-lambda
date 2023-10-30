@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -16,11 +17,10 @@ type Response struct {
 	Message string `json:"message"`
 }
 
-func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC *casodeuso.AutenticarUsuario, cadastroClienteUC *casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
+func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC *casodeuso.AutenticarUsuario,
+	consultarClienteUC *casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
 	// TODO: Implementar a lógica de autenticação do cliente
-	controller := controladores.NewAutenticacaoController(cadastroClienteUC, autenticacaoClienteUC)
-	fmt.Println("ID CLIENTE")
-	println(string(req.PathParameters["id_cliente"]))
+	controller := controladores.NewAutenticacaoController(consultarClienteUC, autenticacaoClienteUC)
 	respBody, err := controller.Handle(req.PathParameters["id_cliente"])
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to handle request: %v", err)
@@ -32,25 +32,31 @@ func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyR
 	}, nil
 }
 
-// func CadastroClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, cadastroClienteUC usecases.CadastroClienteUC) (events.APIGatewayProxyResponse, error) {
-// 	// TODO: Implementar a lógica de criação de cliente
-// 	controller := controladores.NewCadastroClienteController(cadastroClienteUC)
-// 	respBody, err := controller.Handle(req.Body)
-// 	if err != nil {
-// 		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to handle request: %v", err)
-// 	}
+func CadastroClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, cadastrarClienteUC *casodeuso.CadastrarCliente) (events.APIGatewayProxyResponse, error) {
+	// TODO: Implementar a lógica de criação de cliente
+	controller := controladores.NewCadastroClienteController(cadastrarClienteUC)
+	fmt.Printf("req.Body")
+	fmt.Printf("req.Body: %s\n", req.Body)
+	respBody, err := controller.Handle(req.Body)
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to handle request: %v", err)
+	}
 
-// 	return events.APIGatewayProxyResponse{
-// 		StatusCode: http.StatusOK,
-// 		Body:       string(respBody),
-// 	}, nil
-// }
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Body:       string(respBody),
+	}, nil
+}
 
-func Handler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC *casodeuso.AutenticarUsuario, cadastroClienteUC *casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
+func Handler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC *casodeuso.AutenticarUsuario,
+	consultarClienteUC *casodeuso.ConsultarCliente, cadastrarClienteUC *casodeuso.CadastrarCliente) (events.APIGatewayProxyResponse, error) {
+	fmt.Fprintf(os.Stderr, "req.Body: %s\n", req.Body)
 	switch req.HTTPMethod {
 	case "POST":
 		if req.Path == "/clientes/{id_cliente}/auth" {
-			return AutenticacaoClienteHandler(ctx, req, autenticacaoClienteUC, cadastroClienteUC)
+			return AutenticacaoClienteHandler(ctx, req, autenticacaoClienteUC, consultarClienteUC)
+		} else if req.Path == "/clientes" {
+			return CadastroClienteHandler(ctx, req, cadastrarClienteUC)
 		}
 	}
 
@@ -63,9 +69,10 @@ func Handler(ctx context.Context, req events.APIGatewayProxyRequest, autenticaca
 func main() {
 	clienteRepository := repositorio.NewRepositorioClienteImpl()
 	autenticacaoClienteUC := casodeuso.NewAutenticarUsuario()
-	cadastroClienteUC := casodeuso.NewConsultarCliente(clienteRepository)
+	consultarClienteUC := casodeuso.NewConsultarCliente(clienteRepository)
+	cadastrarClienteUC := casodeuso.NewCadastrarCliente(clienteRepository)
 
 	lambda.Start(func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-		return Handler(ctx, req, autenticacaoClienteUC, cadastroClienteUC)
+		return Handler(ctx, req, autenticacaoClienteUC, consultarClienteUC, cadastrarClienteUC)
 	})
 }
