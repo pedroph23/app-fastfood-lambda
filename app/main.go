@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/pedroph23/app-fastfood-lambda/app/apresentacao"
 	"github.com/pedroph23/app-fastfood-lambda/app/casodeuso"
 	"github.com/pedroph23/app-fastfood-lambda/app/controladores"
 	"github.com/pedroph23/app-fastfood-lambda/app/repositorio"
@@ -25,10 +28,10 @@ func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyR
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to handle request: %v", err)
 	}
-
+	returnJson, _ := json.Marshal(apresentacao.NewAuthDTO(string(respBody)))
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
-		Body:       string(respBody),
+		Body:       string(returnJson),
 	}, nil
 }
 
@@ -47,16 +50,34 @@ func CadastroClienteHandler(ctx context.Context, req events.APIGatewayProxyReque
 	}, nil
 }
 
+func ConsultaClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest,
+	consultarClienteUC *casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
+	controller := controladores.NewConsultaClienteController(consultarClienteUC)
+	respBody, err := controller.Handle(req.PathParameters["id_cliente"])
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to handle request: %v", err)
+	}
+
+	returnJson, _ := json.Marshal(apresentacao.NewClienteDTO(respBody.ID, respBody.CPF, respBody.Nome, respBody.Email))
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Body:       string(returnJson),
+	}, nil
+}
+
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC *casodeuso.AutenticarUsuario,
 	consultarClienteUC *casodeuso.ConsultarCliente, cadastrarClienteUC *casodeuso.CadastrarCliente) (events.APIGatewayProxyResponse, error) {
-	log.Printf("req.Body: %s\n", req.Body)
+	log.Printf("req.Path: %s\n", req.Path)
 	switch req.HTTPMethod {
 	case "POST":
-		if req.Path == "/clientes/{id_cliente}/auth" {
+		if strings.HasSuffix(req.Path, "/auth") {
 			return AutenticacaoClienteHandler(ctx, req, autenticacaoClienteUC, consultarClienteUC)
 		} else if req.Path == "/clientes" {
 			return CadastroClienteHandler(ctx, req, cadastrarClienteUC)
 		}
+	case "GET":
+		return ConsultaClienteHandler(ctx, req, consultarClienteUC)
 	}
 
 	return events.APIGatewayProxyResponse{
