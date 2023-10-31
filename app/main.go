@@ -20,6 +20,19 @@ type Response struct {
 	Message string `json:"message"`
 }
 
+func CustomAuthorizerHandler(ctx context.Context, req events.APIGatewayCustomAuthorizerRequest,
+	consultarClienteUC *casodeuso.ConsultarCliente, autorizarUsuarioUC *casodeuso.AutorizarUsuario) (events.APIGatewayV2CustomAuthorizerSimpleResponse, error) {
+	fmt.Println("req.AuthorizationToken: ", req.AuthorizationToken)
+	respAuthn, err := controladores.NewAutorizarcaoController(consultarClienteUC, autorizarUsuarioUC).Handle(req.AuthorizationToken)
+
+	if err != nil {
+		return events.APIGatewayV2CustomAuthorizerSimpleResponse{}, fmt.Errorf("failed to parse token: %v", err)
+	}
+
+	return respAuthn, nil
+
+}
+
 func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC *casodeuso.AutenticarUsuario,
 	consultarClienteUC *casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
 	// TODO: Implementar a lógica de autenticação do cliente
@@ -91,10 +104,50 @@ func main() {
 	autenticacaoClienteUC := casodeuso.NewAutenticarUsuario()
 	consultarClienteUC := casodeuso.NewConsultarCliente(clienteRepository)
 	cadastrarClienteUC := casodeuso.NewCadastrarCliente(clienteRepository)
+	autorizarUsuarioUC := casodeuso.NewAutorizarUsuario()
 
-	lambda.Start(func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-		log.Printf("req.Body: %s\n", req.Body)
-		return Handler(ctx, req, autenticacaoClienteUC, consultarClienteUC, cadastrarClienteUC)
+	lambda.Start(func(ctx context.Context, req map[string]interface{}) (interface{}, error) {
+		fmt.Printf("req: %v\n", req)
 
+		// Verificar se é um evento de proxy
+		if req["requestContext"] != nil {
+			// É um evento de proxy
+			proxyRequestJSON, err := json.Marshal(req)
+			if err != nil {
+				return nil, fmt.Errorf("event type not supported")
+			}
+			var proxyRequestObj events.APIGatewayProxyRequest
+			if err := json.Unmarshal(proxyRequestJSON, &proxyRequestObj); err != nil {
+				return nil, fmt.Errorf("event type not supported")
+			}
+			fmt.Printf("proxyRequest: %v\n", proxyRequestObj)
+			return Handler(ctx, proxyRequestObj, autenticacaoClienteUC, consultarClienteUC, cadastrarClienteUC)
+		}
+
+		// Verificar se é um evento de autorização
+		if req["authorizationToken"] != nil {
+			// É um evento de autorização
+			authorizerRequestJSON, err := json.Marshal(req)
+			if err != nil {
+				return nil, fmt.Errorf("event type not supported")
+			}
+			var authorizerRequestObj events.APIGatewayCustomAuthorizerRequest
+
+			if err := json.Unmarshal(authorizerRequestJSON, &authorizerRequestObj); err != nil {
+				return nil, fmt.Errorf("event type not supported")
+			}
+			fmt.Printf("authorizerRequest: %v\n", authorizerRequestObj)
+
+			authorizerResponse, err := CustomAuthorizerHandler(ctx, authorizerRequestObj, consultarClienteUC, autorizarUsuarioUC)
+			if err != nil {
+				return nil, err
+			}
+			fmt.Printf("authorizerRequest: %v\n", authorizerRequestObj)
+			return authorizerResponse, nil
+		}
+
+		// Se não for nem um evento de proxy nem de autorização, retorne um erro
+		return nil, fmt.Errorf("event type not supported")
 	})
+
 }
