@@ -15,13 +15,7 @@ func NewAutorizarUsuario() *AutorizarUsuario {
 
 func (uc *AutorizarUsuario) AutorizarCliente(tokenString string) (bool, string) {
 
-	if tokenString == "" {
-		return true, ""
-	}
-
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte{}, nil
-	})
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
 
 	if err != nil {
 		fmt.Println("Erro ao fazer parse do token: ", err)
@@ -30,10 +24,11 @@ func (uc *AutorizarUsuario) AutorizarCliente(tokenString string) (bool, string) 
 
 	claims, _ := token.Claims.(jwt.MapClaims)
 
-	if claims["iss"] != "appfastfood" || claims["user"] == "" {
+	if claims["iss"] != "appfastfood" {
 		// Se os requisitos não forem atendidos, bloqueie a requisição]
 		fmt.Println("Bloqueando requisição")
 		return false, ""
+
 	}
 
 	return true, claims["user"].(string)

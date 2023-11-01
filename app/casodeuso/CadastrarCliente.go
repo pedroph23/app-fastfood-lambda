@@ -23,13 +23,17 @@ func NewCadastrarCliente(clienteRepository repositorio.RepositorioCliente) *Cada
 func (uc *CadastrarCliente) CadastrarCliente(inputCliente apresentacao.ClienteDTO) error {
 	hash := md5.Sum([]byte(inputCliente.CPF))
 
-	cliente := dominio.NewCliente(hex.EncodeToString(hash[:]),
+	cliente, err := dominio.NewCliente(hex.EncodeToString(hash[:]),
 		inputCliente.CPF,
 		inputCliente.Nome,
 		inputCliente.Email,
 	)
 
-	err := uc.clienteRepository.CadastrarCliente(cliente)
+	if err != nil {
+		return err
+	}
+
+	err = uc.clienteRepository.CadastrarCliente(cliente)
 	if err != nil {
 		return err
 	}

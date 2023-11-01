@@ -21,12 +21,13 @@ type Response struct {
 }
 
 func CustomAuthorizerHandler(ctx context.Context, req events.APIGatewayCustomAuthorizerRequest,
-	consultarClienteUC *casodeuso.ConsultarCliente, autorizarUsuarioUC *casodeuso.AutorizarUsuario) (events.APIGatewayV2CustomAuthorizerSimpleResponse, error) {
+	consultarClienteUC *casodeuso.ConsultarCliente, autorizarUsuarioUC *casodeuso.AutorizarUsuario) (events.APIGatewayCustomAuthorizerResponse, error) {
 	fmt.Println("req.AuthorizationToken: ", req.AuthorizationToken)
-	respAuthn, err := controladores.NewAutorizarcaoController(consultarClienteUC, autorizarUsuarioUC).Handle(req.AuthorizationToken)
+	token := strings.TrimPrefix(req.AuthorizationToken, "Bearer ")
+	respAuthn, err := controladores.NewAutorizarcaoController(consultarClienteUC, autorizarUsuarioUC).Handle(token, req.MethodArn)
 
 	if err != nil {
-		return events.APIGatewayV2CustomAuthorizerSimpleResponse{}, fmt.Errorf("failed to parse token: %v", err)
+		return events.APIGatewayCustomAuthorizerResponse{}, fmt.Errorf("failed to parse token: %v", err)
 	}
 
 	return respAuthn, nil
@@ -39,7 +40,7 @@ func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyR
 	controller := controladores.NewAutenticacaoController(consultarClienteUC, autenticacaoClienteUC)
 	respBody, err := controller.Handle(req.PathParameters["id_cliente"])
 	if err != nil {
-		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to handle request: %v", err)
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusNotFound, Body: "mensagem: Cliente não encontrado"}, fmt.Errorf("failed to handle request: %v", err)
 	}
 	returnJson, _ := json.Marshal(apresentacao.NewAuthDTO(string(respBody)))
 	return events.APIGatewayProxyResponse{
@@ -68,7 +69,7 @@ func ConsultaClienteHandler(ctx context.Context, req events.APIGatewayProxyReque
 	controller := controladores.NewConsultaClienteController(consultarClienteUC)
 	respBody, err := controller.Handle(req.PathParameters["id_cliente"])
 	if err != nil {
-		return events.APIGatewayProxyResponse{}, fmt.Errorf("failed to handle request: %v", err)
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusNotFound, Body: "mensagem: Cliente não encontrado"}, fmt.Errorf("failed to handle request: %v", err)
 	}
 
 	returnJson, _ := json.Marshal(apresentacao.NewClienteDTO(respBody.ID, respBody.CPF, respBody.Nome, respBody.Email))

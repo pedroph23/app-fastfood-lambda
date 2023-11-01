@@ -19,15 +19,19 @@ func NewAutenticacaoController(consultarClienteUC *casodeuso.ConsultarCliente, a
 }
 
 func (c *AutenticacaoController) Handle(idCliente string) ([]byte, error) {
+	var token string
+	if idCliente == "anonimo" {
+		token, _ = c.autenticacaoClienteUC.AutenticarClienteAnonimo()
+	} else {
+		cliente, err := c.consultarClienteUC.ConsultarCliente(idCliente)
+		if err != nil {
+			return nil, fmt.Errorf("failed to authenticate client: %v", err)
+		}
 
-	cliente, err := c.consultarClienteUC.ConsultarCliente(idCliente)
-	if err != nil {
-		return nil, fmt.Errorf("failed to authenticate client: %v", err)
-	}
-
-	token, err := c.autenticacaoClienteUC.AutenticarCliente(cliente)
-	if err != nil {
-		return nil, fmt.Errorf("failed to authenticate client: %v", err)
+		token, err = c.autenticacaoClienteUC.AutenticarCliente(cliente)
+		if err != nil {
+			return nil, fmt.Errorf("failed to authenticate client: %v", err)
+		}
 	}
 
 	return []byte(token), nil

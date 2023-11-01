@@ -19,29 +19,60 @@ func NewAutorizarcaoController(consultarClienteUC *casodeuso.ConsultarCliente, a
 	}
 }
 
-func (c *AutorizarcaoController) Handle(tokenString string) (events.APIGatewayV2CustomAuthorizerSimpleResponse, error) {
+func (c *AutorizarcaoController) Handle(tokenString string, methodArn string) (events.APIGatewayCustomAuthorizerResponse, error) {
 
 	ok, idUsuario := c.autorizarClienteUC.AutorizarCliente(tokenString)
 	fmt.Printf("idUsuario: %s\n", idUsuario)
 	fmt.Println("ok: ", ok)
 	if !ok {
-		return events.APIGatewayV2CustomAuthorizerSimpleResponse{
-			IsAuthorized: false,
+		// Se não existir token, libere a requisição
+		return events.APIGatewayCustomAuthorizerResponse{
+			PrincipalID: "anonymous",
+			PolicyDocument: events.APIGatewayCustomAuthorizerPolicy{
+				Version: "2012-10-17",
+				Statement: []events.IAMPolicyStatement{
+					{
+						Action:   []string{"execute-api:Invoke"},
+						Effect:   "Deny",
+						Resource: []string{methodArn},
+					},
+				},
+			},
 		}, nil
-	} else {
-		if idUsuario == "" {
-			return events.APIGatewayV2CustomAuthorizerSimpleResponse{
-				IsAuthorized: true,
-			}, nil
-		}
+	} else if idUsuario == "" {
+		// Usuario anonimo
+		return events.APIGatewayCustomAuthorizerResponse{
+			PrincipalID: "anonymous",
+			PolicyDocument: events.APIGatewayCustomAuthorizerPolicy{
+				Version: "2012-10-17",
+				Statement: []events.IAMPolicyStatement{
+					{
+						Action:   []string{"execute-api:Invoke"},
+						Effect:   "Allow",
+						Resource: []string{methodArn},
+					},
+				},
+			},
+		}, nil
 	}
 
 	_, err := c.consultarClienteUC.ConsultarCliente(idUsuario)
 	if err != nil {
-		return events.APIGatewayV2CustomAuthorizerSimpleResponse{}, err
+		return events.APIGatewayCustomAuthorizerResponse{}, err
 	}
 
-	return events.APIGatewayV2CustomAuthorizerSimpleResponse{
-		IsAuthorized: true,
+	return events.APIGatewayCustomAuthorizerResponse{
+		PrincipalID: idUsuario,
+		PolicyDocument: events.APIGatewayCustomAuthorizerPolicy{
+			Version: "2012-10-17",
+			Statement: []events.IAMPolicyStatement{
+				{
+					Action:   []string{"execute-api:Invoke"},
+					Effect:   "Allow",
+					Resource: []string{methodArn},
+				},
+			},
+		},
 	}, nil
+
 }
