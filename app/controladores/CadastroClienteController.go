@@ -7,6 +7,7 @@ import (
 
 	"github.com/pedroph23/app-fastfood-lambda/app/apresentacao"
 	"github.com/pedroph23/app-fastfood-lambda/app/casodeuso"
+	"github.com/pedroph23/app-fastfood-lambda/app/dominio"
 )
 
 type CadastroClienteController struct {
@@ -21,16 +22,18 @@ func NewCadastroClienteController(cadastroClienteUC *casodeuso.CadastrarCliente)
 
 func (controller *CadastroClienteController) Handle(requestBody string) ([]byte, error) {
 	var clienteDTO apresentacao.ClienteDTO
+	var cliente *dominio.Cliente
 	fmt.Printf("req.Body: %s\n", requestBody)
 
 	err := json.Unmarshal([]byte(requestBody), &clienteDTO)
-	err = controller.cadastroClienteUC.CadastrarCliente(clienteDTO)
+	cliente, err = controller.cadastroClienteUC.CadastrarCliente(clienteDTO)
 	if err != nil {
 		return nil, err
 	}
 
 	response := map[string]string{
-		"message": "Cliente cadastrado com sucesso",
+		"message":    "Cliente cadastrado com sucesso",
+		"id_cliente": cliente.ID,
 	}
 	respBody, err := json.Marshal(response)
 	if err != nil {
