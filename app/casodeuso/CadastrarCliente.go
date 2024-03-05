@@ -28,13 +28,14 @@ func (uc *CadastrarCliente) CadastrarCliente(inputCliente apresentacao.ClienteDT
 		hex.EncodeToString(hash[:]),
 		inputCliente.Nome,
 		inputCliente.Email,
+		"ATIVO",
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = uc.clienteRepository.CadastrarCliente(cliente)
+	err = uc.clienteRepository.SalvarOuAtualizarCliente(cliente)
 	if err != nil {
 		return nil, err
 	}

@@ -21,7 +21,7 @@ func NewRepositorioClienteImpl() *RepositorioClienteDynamoDBImpl {
 	return &RepositorioClienteDynamoDBImpl{svc: dynamodb.New(sess)}
 }
 
-func (r *RepositorioClienteDynamoDBImpl) CadastrarCliente(cliente *dominio.Cliente) error {
+func (r *RepositorioClienteDynamoDBImpl) SalvarOuAtualizarCliente(cliente *dominio.Cliente) error {
 	av, err := dynamodbattribute.MarshalMap(cliente)
 	if err != nil {
 		return err
