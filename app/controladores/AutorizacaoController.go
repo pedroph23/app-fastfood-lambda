@@ -8,11 +8,11 @@ import (
 )
 
 type AutorizarcaoController struct {
-	consultarClienteUC *casodeuso.ConsultarCliente
-	autorizarClienteUC *casodeuso.AutorizarUsuario
+	consultarClienteUC casodeuso.ConsultarCliente
+	autorizarClienteUC casodeuso.AutorizarUsuario
 }
 
-func NewAutorizarcaoController(consultarClienteUC *casodeuso.ConsultarCliente, autorizarClienteUC *casodeuso.AutorizarUsuario) *AutorizarcaoController {
+func NewAutorizarcaoController(consultarClienteUC casodeuso.ConsultarCliente, autorizarClienteUC casodeuso.AutorizarUsuario) *AutorizarcaoController {
 	return &AutorizarcaoController{
 		consultarClienteUC: consultarClienteUC,
 		autorizarClienteUC: autorizarClienteUC,

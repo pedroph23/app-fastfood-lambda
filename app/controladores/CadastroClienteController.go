@@ -11,10 +11,10 @@ import (
 )
 
 type CadastroClienteController struct {
-	cadastroClienteUC *casodeuso.CadastrarCliente
+	cadastroClienteUC casodeuso.CadastrarCliente
 }
 
-func NewCadastroClienteController(cadastroClienteUC *casodeuso.CadastrarCliente) *CadastroClienteController {
+func NewCadastroClienteController(cadastroClienteUC casodeuso.CadastrarCliente) *CadastroClienteController {
 	return &CadastroClienteController{
 		cadastroClienteUC: cadastroClienteUC,
 	}

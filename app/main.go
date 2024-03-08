@@ -21,7 +21,7 @@ type Response struct {
 }
 
 func CustomAuthorizerHandler(ctx context.Context, req events.APIGatewayCustomAuthorizerRequest,
-	consultarClienteUC *casodeuso.ConsultarCliente, autorizarUsuarioUC *casodeuso.AutorizarUsuario) (events.APIGatewayCustomAuthorizerResponse, error) {
+	consultarClienteUC casodeuso.ConsultarCliente, autorizarUsuarioUC casodeuso.AutorizarUsuario) (events.APIGatewayCustomAuthorizerResponse, error) {
 	fmt.Println("req.AuthorizationToken: ", req.AuthorizationToken)
 	token := strings.TrimPrefix(req.AuthorizationToken, "Bearer ")
 	respAuthn, err := controladores.NewAutorizarcaoController(consultarClienteUC, autorizarUsuarioUC).Handle(token, req.MethodArn)
@@ -34,8 +34,8 @@ func CustomAuthorizerHandler(ctx context.Context, req events.APIGatewayCustomAut
 
 }
 
-func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC *casodeuso.AutenticarUsuario,
-	consultarClienteUC *casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
+func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, autenticacaoClienteUC casodeuso.AutenticarUsuario,
+	consultarClienteUC casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
 	// TODO: Implementar a lógica de autenticação do cliente
 	controller := controladores.NewAutenticacaoController(consultarClienteUC, autenticacaoClienteUC)
 	respBody, err := controller.Handle(req.PathParameters["id_cliente"])
@@ -49,7 +49,7 @@ func AutenticacaoClienteHandler(ctx context.Context, req events.APIGatewayProxyR
 	}, nil
 }
 
-func CadastroClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, cadastrarClienteUC *casodeuso.CadastrarCliente) (events.APIGatewayProxyResponse, error) {
+func CadastroClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest, cadastrarClienteUC casodeuso.CadastrarCliente) (events.APIGatewayProxyResponse, error) {
 	// TODO: Implementar a lógica de criação de cliente
 	controller := controladores.NewCadastroClienteController(cadastrarClienteUC)
 	log.Printf("req.Body: %s\n", req.Body)
@@ -65,7 +65,7 @@ func CadastroClienteHandler(ctx context.Context, req events.APIGatewayProxyReque
 }
 
 func ConsultaClienteHandler(ctx context.Context, req events.APIGatewayProxyRequest,
-	consultarClienteUC *casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
+	consultarClienteUC casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
 	controller := controladores.NewConsultaClienteController(consultarClienteUC)
 	respBody, err := controller.Handle(req.PathParameters["id_cliente"])
 	if err != nil {
@@ -83,8 +83,8 @@ func ConsultaClienteHandler(ctx context.Context, req events.APIGatewayProxyReque
 
 func AtualizaClienteHandler(ctx context.Context,
 	req events.APIGatewayProxyRequest,
-	atualizarClienteUC *casodeuso.AtualizarCliente,
-	consultarClienteUC *casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
+	atualizarClienteUC casodeuso.AtualizarCliente,
+	consultarClienteUC casodeuso.ConsultarCliente) (events.APIGatewayProxyResponse, error) {
 	controller := controladores.NewAtualizarClienteController(atualizarClienteUC, consultarClienteUC)
 	respBody, err := controller.Handle(req.PathParameters["id_cliente"], req.Body)
 	if err != nil {
@@ -98,10 +98,10 @@ func AtualizaClienteHandler(ctx context.Context,
 }
 
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest,
-	autenticacaoClienteUC *casodeuso.AutenticarUsuario,
-	consultarClienteUC *casodeuso.ConsultarCliente,
-	cadastrarClienteUC *casodeuso.CadastrarCliente,
-	atualizarClienteUC *casodeuso.AtualizarCliente) (events.APIGatewayProxyResponse, error) {
+	autenticacaoClienteUC casodeuso.AutenticarUsuario,
+	consultarClienteUC casodeuso.ConsultarCliente,
+	cadastrarClienteUC casodeuso.CadastrarCliente,
+	atualizarClienteUC casodeuso.AtualizarCliente) (events.APIGatewayProxyResponse, error) {
 
 	log.Printf("req.Path: %s\n", req.Path)
 	switch req.HTTPMethod {
@@ -126,11 +126,11 @@ func Handler(ctx context.Context, req events.APIGatewayProxyRequest,
 
 func main() {
 	clienteRepository := repositorio.NewRepositorioClienteImpl()
-	autenticacaoClienteUC := casodeuso.NewAutenticarUsuario()
-	consultarClienteUC := casodeuso.NewConsultarCliente(clienteRepository)
-	cadastrarClienteUC := casodeuso.NewCadastrarCliente(clienteRepository)
-	autorizarUsuarioUC := casodeuso.NewAutorizarUsuario()
-	atualizarClienteUC := casodeuso.NewAtualizarCliente(clienteRepository)
+	autenticacaoClienteUC := casodeuso.NewAutenticarUsuarioImpl()
+	consultarClienteUC := casodeuso.NewConsultarClienteImpl(clienteRepository)
+	cadastrarClienteUC := casodeuso.NewCadastrarClienteImpl(clienteRepository)
+	autorizarUsuarioUC := casodeuso.NewAutorizarUsuarioImpl()
+	atualizarClienteUC := casodeuso.NewAtualizarClienteImpl(clienteRepository)
 
 	lambda.Start(func(ctx context.Context, req map[string]interface{}) (interface{}, error) {
 		fmt.Printf("req: %v\n", req)

@@ -10,12 +10,12 @@ import (
 )
 
 type AtualizarClienteController struct {
-	atualizarClienteUC *casodeuso.AtualizarCliente
-	consultaClienteUC  *casodeuso.ConsultarCliente
+	atualizarClienteUC casodeuso.AtualizarCliente
+	consultaClienteUC  casodeuso.ConsultarCliente
 }
 
-func NewAtualizarClienteController(atualizarClienteUC *casodeuso.AtualizarCliente,
-	consultaClienteUC *casodeuso.ConsultarCliente) *AtualizarClienteController {
+func NewAtualizarClienteController(atualizarClienteUC casodeuso.AtualizarCliente,
+	consultaClienteUC casodeuso.ConsultarCliente) *AtualizarClienteController {
 	return &AtualizarClienteController{
 		atualizarClienteUC: atualizarClienteUC,
 		consultaClienteUC:  consultaClienteUC,

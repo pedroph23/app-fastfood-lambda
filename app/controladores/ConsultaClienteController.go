@@ -6,10 +6,10 @@ import (
 )
 
 type ConsultaClienteController struct {
-	consultarClienteUC *casodeuso.ConsultarCliente
+	consultarClienteUC casodeuso.ConsultarCliente
 }
 
-func NewConsultaClienteController(consultarClienteUC *casodeuso.ConsultarCliente) *ConsultaClienteController {
+func NewConsultaClienteController(consultarClienteUC casodeuso.ConsultarCliente) *ConsultaClienteController {
 	return &ConsultaClienteController{consultarClienteUC: consultarClienteUC}
 }
 

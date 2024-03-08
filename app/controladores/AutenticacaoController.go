@@ -7,11 +7,11 @@ import (
 )
 
 type AutenticacaoController struct {
-	consultarClienteUC    *casodeuso.ConsultarCliente
-	autenticacaoClienteUC *casodeuso.AutenticarUsuario
+	consultarClienteUC    casodeuso.ConsultarCliente
+	autenticacaoClienteUC casodeuso.AutenticarUsuario
 }
 
-func NewAutenticacaoController(consultarClienteUC *casodeuso.ConsultarCliente, autenticacaoClienteUC *casodeuso.AutenticarUsuario) *AutenticacaoController {
+func NewAutenticacaoController(consultarClienteUC casodeuso.ConsultarCliente, autenticacaoClienteUC casodeuso.AutenticarUsuario) *AutenticacaoController {
 	return &AutenticacaoController{
 		consultarClienteUC:    consultarClienteUC,
 		autenticacaoClienteUC: autenticacaoClienteUC,
