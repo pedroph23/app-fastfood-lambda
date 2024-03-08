@@ -11,10 +11,10 @@ import (
 )
 
 type CadastroClienteController struct {
-	cadastroClienteUC *casodeuso.CadastrarCliente
+	cadastroClienteUC casodeuso.CadastrarCliente
 }
 
-func NewCadastroClienteController(cadastroClienteUC *casodeuso.CadastrarCliente) *CadastroClienteController {
+func NewCadastroClienteController(cadastroClienteUC casodeuso.CadastrarCliente) *CadastroClienteController {
 	return &CadastroClienteController{
 		cadastroClienteUC: cadastroClienteUC,
 	}
@@ -26,6 +26,11 @@ func (controller *CadastroClienteController) Handle(requestBody string) ([]byte,
 	fmt.Printf("req.Body: %s\n", requestBody)
 
 	err := json.Unmarshal([]byte(requestBody), &clienteDTO)
+
+	if err != nil {
+		return nil, err
+	}
+
 	cliente, err = controller.cadastroClienteUC.CadastrarCliente(clienteDTO)
 	if err != nil {
 		return nil, err
