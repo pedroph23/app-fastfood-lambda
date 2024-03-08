@@ -135,4 +135,59 @@ func TestHandler(t *testing.T) {
 		assert.Equal(t, "anonymous", response.PrincipalID)
 		assert.Equal(t, "Deny", response.PolicyDocument.Statement[0].Effect)
 	})
+
+	t.Run("AutenticacaoClienteHandler_Sucesso", func(t *testing.T) {
+		// Envie um token válido para autenticar um cliente
+		req := events.APIGatewayProxyRequest{
+			HTTPMethod:     "POST",
+			Path:           "/auth",
+			PathParameters: map[string]string{"id_cliente": "123"},
+		}
+
+		response, err := AutenticacaoClienteHandler(context.Background(), req, autenticacaoClienteUC, consultarClienteUC)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, response.StatusCode)
+	})
+
+	t.Run("CadastroClienteHandler_Sucesso", func(t *testing.T) {
+		// Envie um corpo de requisição válido para cadastrar um cliente
+		req := events.APIGatewayProxyRequest{
+			HTTPMethod: "POST",
+			Path:       "/clientes",
+			Body:       `{"cpf": "12345678900", "id": "123", "nome": "John Doe", "email": "john.doe@example.com", "status": "ATIVO"}`,
+		}
+
+		response, err := CadastroClienteHandler(context.Background(), req, cadastrarClienteUC)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, response.StatusCode)
+	})
+
+	t.Run("ConsultaClienteHandler_Sucesso", func(t *testing.T) {
+		// Consulte um cliente existente na base de dados
+		req := events.APIGatewayProxyRequest{
+			HTTPMethod:     "GET",
+			Path:           "/clientes/123",
+			PathParameters: map[string]string{"id_cliente": "123"},
+		}
+
+		response, err := ConsultaClienteHandler(context.Background(), req, consultarClienteUC)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, response.StatusCode)
+	})
+
+	t.Run("AtualizaClienteHandler_Sucesso", func(t *testing.T) {
+		// Envie um corpo de requisição válido para atualizar um cliente existente na base de dados
+		req := events.APIGatewayProxyRequest{
+			HTTPMethod: "PATCH",
+			Path:       "/clientes/123",
+			PathParameters: map[string]string{
+				"id_cliente": "123",
+			},
+			Body: `{"cpf": "12345678900", "id": "123", "nome": "John Doe", "email": "john.doe@example.com", "status": "INATIVO"}`,
+		}
+
+		response, err := AtualizaClienteHandler(context.Background(), req, atualizarClienteUC, consultarClienteUC)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, response.StatusCode)
+	})
 }
