@@ -10,7 +10,7 @@ resource "aws_lambda_function" "example" {
   function_name = "example"
   role         = aws_iam_role.example.arn
   handler      = "main"
-  runtime      = "go1.x"
+  runtime      = "provided.al2023"
 
   filename     = var.TF_LAMBDA_ZIP_PATH # Recupera o zip da lambda disponibilizado pela esteira
 
