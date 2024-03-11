@@ -2,6 +2,8 @@ package repositorio
 
 import (
 	"fmt"
+	"log"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -21,7 +23,7 @@ func NewRepositorioClienteImpl() *RepositorioClienteDynamoDBImpl {
 	return &RepositorioClienteDynamoDBImpl{svc: dynamodb.New(sess)}
 }
 
-func (r *RepositorioClienteDynamoDBImpl) SalvarOuAtualizarCliente(cliente *dominio.Cliente) error {
+func (r *RepositorioClienteDynamoDBImpl) SalvarCliente(cliente *dominio.Cliente) error {
 	av, err := dynamodbattribute.MarshalMap(cliente)
 	if err != nil {
 		return err
@@ -33,6 +35,46 @@ func (r *RepositorioClienteDynamoDBImpl) SalvarOuAtualizarCliente(cliente *domin
 	}
 
 	_, err = r.svc.PutItem(input)
+	return err
+}
+
+func (r *RepositorioClienteDynamoDBImpl) AtualizarCliente(cliente *dominio.Cliente) error {
+	av, err := dynamodbattribute.MarshalMap(cliente)
+	if err != nil {
+		return err
+	}
+
+	// Converte o mapa de atributos para um mapa de expressões de atualização
+	updateExpression := "SET "
+	expressionAttributeValues := make(map[string]*dynamodb.AttributeValue)
+	expressionAttributeNames := make(map[string]*string)
+	for k, v := range av {
+
+		if k != "ID" {
+			if k == "Status" { // Substitui o nome do atributo reservado por um nome alternativo
+				expressionAttributeNames["#s"] = aws.String("Status")
+				updateExpression += "#s = :" + k + ", "
+			} else {
+				updateExpression += k + " = :" + k + ", "
+			}
+			expressionAttributeValues[":"+k] = v
+		}
+	}
+	// Remove a última vírgula e espaço da expressão de atualização
+	updateExpression = strings.TrimSuffix(updateExpression, ", ")
+
+	input := &dynamodb.UpdateItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"ID": {S: aws.String(cliente.ID)}, // Supondo que "ID" é a chave primária
+		},
+		TableName:                 aws.String("ClienteAppFastfood"),
+		UpdateExpression:          aws.String(updateExpression),
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExpressionAttributeNames:  expressionAttributeNames, // Adiciona os nomes de atributos alternativos
+	}
+
+	log.Printf("Input para UpdateItem: %+v\n", input)
+	_, err = r.svc.UpdateItem(input)
 	return err
 }
 

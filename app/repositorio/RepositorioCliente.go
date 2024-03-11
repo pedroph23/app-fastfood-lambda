@@ -6,6 +6,7 @@ import (
 )
 
 type RepositorioCliente interface {
-	SalvarOuAtualizarCliente(cliente *dominio.Cliente) error
+	SalvarCliente(cliente *dominio.Cliente) error
 	BuscarClientePorID(idCliente string) (*dominio.Cliente, error)
+	AtualizarCliente(cliente *dominio.Cliente) error
 }

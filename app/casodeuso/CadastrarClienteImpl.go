@@ -35,7 +35,7 @@ func (uc *CadastrarClienteImpl) CadastrarCliente(inputCliente apresentacao.Clien
 		return nil, err
 	}
 
-	err = uc.clienteRepository.SalvarOuAtualizarCliente(cliente)
+	err = uc.clienteRepository.SalvarCliente(cliente)
 	if err != nil {
 		return nil, err
 	}

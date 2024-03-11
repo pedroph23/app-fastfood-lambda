@@ -3,6 +3,7 @@ package casodeuso_test
 import (
 	"testing"
 
+	"github.com/pedroph23/app-fastfood-lambda/app/apresentacao"
 	"github.com/pedroph23/app-fastfood-lambda/app/casodeuso"
 	"github.com/pedroph23/app-fastfood-lambda/app/dominio"
 	"github.com/pedroph23/app-fastfood-lambda/app/repositorio"
@@ -24,10 +25,12 @@ func TestAtualizarCliente_AtualizarCliente(t *testing.T) {
 			Status: "ATIVO",
 		}
 
+		novosDadosCliente := apresentacao.NewClienteDTO("12345678900", "123", "John Doe", "john.doe@example.com", "ATIVO")
+
 		expectedID := "39b5177e82858ecc5661a2077b58edc3"
 		expectedStatus := "ATIVO"
 
-		clienteAtualizado, err := uc.AtualizarCliente(inputCliente)
+		clienteAtualizado, err := uc.AtualizarCliente(inputCliente, novosDadosCliente)
 		assert.NoError(t, err)
 		assert.NotNil(t, clienteAtualizado)
 		assert.Equal(t, expectedID, clienteAtualizado.ID)
@@ -42,11 +45,11 @@ func TestAtualizarCliente_AtualizarCliente(t *testing.T) {
 			Email:  "john.doe@example.com",
 			Status: "INATIVO",
 		}
-
+		novosDadosCliente := apresentacao.NewClienteDTO("12345678900", "123", "John Doe", "john.doe@example.com", "ATIVO")
 		expectedID := "123" // MD5 hash of "12345678900"
 		expectedStatus := "INATIVO"
 
-		clienteAtualizado, err := uc.AtualizarCliente(inputCliente)
+		clienteAtualizado, err := uc.AtualizarCliente(inputCliente, novosDadosCliente)
 		assert.NoError(t, err)
 		assert.NotNil(t, clienteAtualizado)
 		assert.Equal(t, expectedID, clienteAtualizado.ID)

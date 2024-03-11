@@ -23,7 +23,7 @@ func NewAtualizarClienteController(atualizarClienteUC casodeuso.AtualizarCliente
 }
 
 func (controller *AtualizarClienteController) Handle(idCliente string, requestBody string) ([]byte, error) {
-	var clienteDTO apresentacao.ClienteDTO
+	var clienteDTO *apresentacao.ClienteDTO
 	var cliente *dominio.Cliente
 	fmt.Printf("req.Body: %s\n", requestBody)
 
@@ -33,13 +33,13 @@ func (controller *AtualizarClienteController) Handle(idCliente string, requestBo
 		return nil, err
 	}
 
-	cliente, err = controller.consultaClienteUC.ConsultarCliente(clienteDTO.ID)
+	cliente, err = controller.consultaClienteUC.ConsultarCliente(idCliente)
 
 	if err != nil {
 		return nil, err
 	}
 
-	cliente, err = controller.atualizarClienteUC.AtualizarCliente(cliente)
+	cliente, err = controller.atualizarClienteUC.AtualizarCliente(cliente, clienteDTO)
 
 	if err != nil {
 		return nil, err

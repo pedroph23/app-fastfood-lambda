@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/pedroph23/app-fastfood-lambda/app/apresentacao"
 	"github.com/pedroph23/app-fastfood-lambda/app/controladores"
 	"github.com/pedroph23/app-fastfood-lambda/app/dominio"
 )
@@ -14,7 +15,7 @@ import (
 type MockAtualizarCliente struct{}
 
 // AtualizarCliente simula a operação de atualizar um cliente.
-func (m *MockAtualizarCliente) AtualizarCliente(inputCliente *dominio.Cliente) (*dominio.Cliente, error) {
+func (m *MockAtualizarCliente) AtualizarCliente(inputCliente *dominio.Cliente, novosDadosCliente *apresentacao.ClienteDTO) (*dominio.Cliente, error) {
 	// Simula a atualização do cliente, retornando o cliente atualizado
 	inputCliente.Status = "ATIVO"
 	return inputCliente, nil

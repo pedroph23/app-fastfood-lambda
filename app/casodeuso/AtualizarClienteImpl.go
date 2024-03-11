@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 
+	"github.com/pedroph23/app-fastfood-lambda/app/apresentacao"
 	"github.com/pedroph23/app-fastfood-lambda/app/dominio"
 	"github.com/pedroph23/app-fastfood-lambda/app/repositorio"
 )
@@ -18,10 +19,10 @@ func NewAtualizarClienteImpl(clienteRepository repositorio.RepositorioCliente) *
 	}
 }
 
-func (uc *AtualizarClienteImpl) AtualizarCliente(inputCliente *dominio.Cliente) (*dominio.Cliente, error) {
+func (uc *AtualizarClienteImpl) AtualizarCliente(inputCliente *dominio.Cliente, novosDadosCliente *apresentacao.ClienteDTO) (*dominio.Cliente, error) {
 	var cliente *dominio.Cliente
 	var err error
-	if inputCliente.Status == "INATIVO" {
+	if novosDadosCliente.Status == "INATIVO" {
 		cliente, err = dominio.NewCliente(
 			"",
 			inputCliente.ID,
@@ -44,7 +45,7 @@ func (uc *AtualizarClienteImpl) AtualizarCliente(inputCliente *dominio.Cliente) 
 		return nil, err
 	}
 
-	err = uc.clienteRepository.SalvarOuAtualizarCliente(cliente)
+	err = uc.clienteRepository.AtualizarCliente(cliente)
 	if err != nil {
 		return nil, err
 	}

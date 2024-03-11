@@ -13,7 +13,13 @@ func NewRepositorioClienteMock() *RepositorioClienteMock {
 }
 
 // SalvarOuAtualizarCliente simula a operação de salvar ou atualizar um cliente.
-func (r *RepositorioClienteMock) SalvarOuAtualizarCliente(cliente *dominio.Cliente) error {
+func (r *RepositorioClienteMock) AtualizarCliente(cliente *dominio.Cliente) error {
+	// Aqui você pode retornar um cliente mockado
+	return nil
+}
+
+// SalvarOuAtualizarCliente simula a operação de salvar ou atualizar um cliente.
+func (r *RepositorioClienteMock) SalvarCliente(cliente *dominio.Cliente) error {
 	// Aqui você pode retornar um cliente mockado
 	return nil
 }
